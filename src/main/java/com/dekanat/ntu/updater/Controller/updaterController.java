@@ -52,25 +52,20 @@ public class updaterController {
     public String uploadUpdate(@RequestParam("jsonFile") MultipartFile jsonFile, @RequestParam("zipFile") MultipartFile zipFile)  {
         try {
             // Обробка завантаженого JSON файлу
-            if (jsonFile != null && !jsonFile.isEmpty() && Objects.equals(jsonFile.getContentType(), "application/json")) {
-                Path jsonFilePath = Paths.get("src/main/resources/" + jsonFile.getOriginalFilename());
-                Files.write(jsonFilePath, jsonFile.getBytes());
-            }
+            Path jsonFilePath = Paths.get("/app/" + jsonFile.getOriginalFilename());
+            Files.createDirectories(jsonFilePath.getParent());
+            Files.write(jsonFilePath, jsonFile.getBytes());
 
-            // Обробка завантаженого ZIP файлу
             if (zipFile != null && !zipFile.isEmpty() && Objects.equals(zipFile.getContentType(), "application/zip")) {
-                Path zipFilePath = Paths.get("src/main/resources/" + zipFile.getOriginalFilename());
+                Path zipFilePath = Paths.get("/app/", zipFile.getOriginalFilename());
                 Files.write(zipFilePath, zipFile.getBytes());
             }
         } catch(IOException ex) {
-            // обробити виключення
             ex.fillInStackTrace();
+            return "error";
         }
 
         return "redirect:upload";
     }
-
-
-
 
 }
