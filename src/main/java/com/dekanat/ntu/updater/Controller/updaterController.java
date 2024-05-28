@@ -27,8 +27,10 @@ public class updaterController {
     public String checkUpdate() throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
-
+        Path currentPath = Paths.get("").toAbsolutePath();
+        System.out.println(currentPath.toString());
         Resource resource = new ClassPathResource("/app/update/version.json");
+
         VersionInfo versionInfo = mapper.readValue(resource.getFile(), VersionInfo.class);
 
         return versionInfo.getVersion();
@@ -36,6 +38,8 @@ public class updaterController {
 
     @GetMapping("/download")
     public ResponseEntity<Resource> download() throws IOException {
+        Resource resource = new ClassPathResource("/app/update/version.json");
+        Path currentPath = Paths.get("").toAbsolutePath();
         ClassPathResource file = new ClassPathResource("/app/update/update.zip");
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=update.zip");
