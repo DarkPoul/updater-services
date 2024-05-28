@@ -52,12 +52,14 @@ public class updaterController {
     public String uploadUpdate(@RequestParam("jsonFile") MultipartFile jsonFile, @RequestParam("zipFile") MultipartFile zipFile)  {
         try {
             // Обробка завантаженого JSON файлу
-            Path jsonFilePath = Paths.get("/app/" + jsonFile.getOriginalFilename());
+            System.out.println("json");
+            Path jsonFilePath = Paths.get("/app/update/" + jsonFile.getOriginalFilename());
             Files.createDirectories(jsonFilePath.getParent());
             Files.write(jsonFilePath, jsonFile.getBytes());
 
             if (zipFile != null && !zipFile.isEmpty() && Objects.equals(zipFile.getContentType(), "application/zip")) {
-                Path zipFilePath = Paths.get("/app/", zipFile.getOriginalFilename());
+                System.out.println("zip");
+                Path zipFilePath = Paths.get("/app/update", zipFile.getOriginalFilename());
                 Files.write(zipFilePath, zipFile.getBytes());
             }
         } catch(IOException ex) {
