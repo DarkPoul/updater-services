@@ -1,2 +1,3 @@
 docker build -t update-service .
-docker run -d -p 80:8080 -v /home/svarog/uploads:/app/uploads --name updater-container update-service
+docker run -d -p 80:8080 -v /home/svarog/uploads:/app/update --name updater-container update-service
+docker exec -it updater-container /bin/bash

@@ -28,7 +28,7 @@ public class updaterController {
 
         ObjectMapper mapper = new ObjectMapper();
 
-        Resource resource = new ClassPathResource("version.json");
+        Resource resource = new ClassPathResource("/update/version.json");
         VersionInfo versionInfo = mapper.readValue(resource.getFile(), VersionInfo.class);
 
         return versionInfo.getVersion();
@@ -36,14 +36,14 @@ public class updaterController {
 
     @GetMapping("/download")
     public ResponseEntity<Resource> download() throws IOException {
-        ClassPathResource file = new ClassPathResource("update.zip");
+        ClassPathResource file = new ClassPathResource("/update/update.zip");
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=update.zip");
 
         return ResponseEntity.ok()
                 .headers(headers)
                 .contentType(MediaType
-                        .parseMediaType("application/zip"))
+                        .parseMediaType("application/x-zip-compressed"))
                 .body(new InputStreamResource(file
                         .getInputStream()));
     }
@@ -52,18 +52,13 @@ public class updaterController {
     public String uploadUpdate(@RequestParam("jsonFile") MultipartFile jsonFile, @RequestParam("zipFile") MultipartFile zipFile)  {
         try {
             // Обробка завантаженого JSON файлу
-            System.out.println("json");
             Path jsonFilePath = Paths.get("/app/update/" + jsonFile.getOriginalFilename());
             Files.createDirectories(jsonFilePath.getParent());
             Files.write(jsonFilePath, jsonFile.getBytes());
 
             if (zipFile != null && !zipFile.isEmpty() && Objects.equals(zipFile.getContentType(), "application/x-zip-compressed")) {
-                System.out.println("zip");
                 Path zipFilePath = Paths.get("/app/update", zipFile.getOriginalFilename());
                 Files.write(zipFilePath, zipFile.getBytes());
-            }
-            else {
-                return zipFile.getName() + zipFile.getContentType() + "error";
             }
         } catch(IOException ex) {
             ex.fillInStackTrace();
