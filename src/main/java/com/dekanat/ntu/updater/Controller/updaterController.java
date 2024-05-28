@@ -62,6 +62,9 @@ public class updaterController {
                 Path zipFilePath = Paths.get("/app/update", zipFile.getOriginalFilename());
                 Files.write(zipFilePath, zipFile.getBytes());
             }
+            else {
+                return zipFile.getName() + zipFile.getContentType() + "error";
+            }
         } catch(IOException ex) {
             ex.fillInStackTrace();
             return "error";
