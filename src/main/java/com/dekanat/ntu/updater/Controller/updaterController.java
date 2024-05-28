@@ -57,7 +57,7 @@ public class updaterController {
             Files.createDirectories(jsonFilePath.getParent());
             Files.write(jsonFilePath, jsonFile.getBytes());
 
-            if (zipFile != null && !zipFile.isEmpty() && Objects.equals(zipFile.getContentType(), "application/zip")) {
+            if (zipFile != null && !zipFile.isEmpty() && Objects.equals(zipFile.getContentType(), "application/x-zip-compressed")) {
                 System.out.println("zip");
                 Path zipFilePath = Paths.get("/app/update", zipFile.getOriginalFilename());
                 Files.write(zipFilePath, zipFile.getBytes());
