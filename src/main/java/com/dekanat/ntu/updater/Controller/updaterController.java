@@ -28,7 +28,7 @@ public class updaterController {
 
         ObjectMapper mapper = new ObjectMapper();
 
-        Resource resource = new ClassPathResource("/update/version.json");
+        Resource resource = new ClassPathResource("/app/update/version.json");
         VersionInfo versionInfo = mapper.readValue(resource.getFile(), VersionInfo.class);
 
         return versionInfo.getVersion();
@@ -36,7 +36,7 @@ public class updaterController {
 
     @GetMapping("/download")
     public ResponseEntity<Resource> download() throws IOException {
-        ClassPathResource file = new ClassPathResource("/update/update.zip");
+        ClassPathResource file = new ClassPathResource("/app/update/update.zip");
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=update.zip");
 
