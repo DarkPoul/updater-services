@@ -27,23 +27,9 @@ public class updaterController {
     public String checkUpdate() throws IOException {
 
         try {
-            String currentDirectory = System.getProperty("user.dir");
-            System.out.println("Current working directory: " + currentDirectory);
-
-            String currentDirectory1 = Paths.get("").toAbsolutePath().toString();
-            System.out.println("Current working directory: " + currentDirectory1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-
-
-
-        try {
             ObjectMapper mapper = new ObjectMapper();
 
-            Resource resource = new ClassPathResource(System.getProperty("user.dir")+"//update//version.json");
+            Resource resource = new ClassPathResource(System.getProperty("user.dir")+"/version.json");
 
             VersionInfo versionInfo = mapper.readValue(resource.getFile(), VersionInfo.class);
 
@@ -51,32 +37,6 @@ public class updaterController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        try {
-            ObjectMapper mapper2 = new ObjectMapper();
-
-            Resource resource2 = new ClassPathResource("//update//version.json");
-
-            VersionInfo versionInfo2 = mapper2.readValue(resource2.getFile(), VersionInfo.class);
-            System.out.println(versionInfo2.getVersion());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            ObjectMapper mapper3 = new ObjectMapper();
-
-            Resource resource3 = new ClassPathResource("//version.json");
-
-            VersionInfo versionInfo3 = mapper3.readValue(resource3.getFile(), VersionInfo.class);
-            System.out.println(versionInfo3.getVersion());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        Path currentPath = Paths.get("").toAbsolutePath();
-        System.out.println(currentPath.toString());
 
 
         return "update";
@@ -88,7 +48,7 @@ public class updaterController {
         Path currentPath = Paths.get("").toAbsolutePath();
         System.out.println(currentPath.toString());
 
-        ClassPathResource file = new ClassPathResource("/app/update/update.zip");
+        ClassPathResource file = new ClassPathResource("/app/update.zip");
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=update.zip");
 
@@ -104,12 +64,12 @@ public class updaterController {
     public String uploadUpdate(@RequestParam("jsonFile") MultipartFile jsonFile, @RequestParam("zipFile") MultipartFile zipFile)  {
         try {
             // Обробка завантаженого JSON файлу
-            Path jsonFilePath = Paths.get("/app/update/" + jsonFile.getOriginalFilename());
+            Path jsonFilePath = Paths.get("/app/" + jsonFile.getOriginalFilename());
             Files.createDirectories(jsonFilePath.getParent());
             Files.write(jsonFilePath, jsonFile.getBytes());
 
             if (zipFile != null && !zipFile.isEmpty() && Objects.equals(zipFile.getContentType(), "application/x-zip-compressed")) {
-                Path zipFilePath = Paths.get("/app/update", zipFile.getOriginalFilename());
+                Path zipFilePath = Paths.get("/app/", zipFile.getOriginalFilename());
                 Files.write(zipFilePath, zipFile.getBytes());
             }
         } catch(IOException ex) {
