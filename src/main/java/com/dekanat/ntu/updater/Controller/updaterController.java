@@ -26,6 +26,19 @@ public class updaterController {
     @GetMapping("/check-update")
     public String checkUpdate() throws IOException {
 
+        try {
+            String currentDirectory = System.getProperty("user.dir");
+            System.out.println("Current working directory: " + currentDirectory);
+
+            String currentDirectory1 = Paths.get("").toAbsolutePath().toString();
+            System.out.println("Current working directory: " + currentDirectory1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+
 
         try {
             ObjectMapper mapper = new ObjectMapper();
