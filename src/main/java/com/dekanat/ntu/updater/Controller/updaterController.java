@@ -26,30 +26,47 @@ public class updaterController {
     @GetMapping("/check-update")
     public String checkUpdate() throws IOException {
 
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+
+            Resource resource = new ClassPathResource("/app/update/version.json");
+
+            VersionInfo versionInfo = mapper.readValue(resource.getFile(), VersionInfo.class);
+
+            System.out.println(versionInfo.getVersion());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            ObjectMapper mapper2 = new ObjectMapper();
+
+            Resource resource2 = new ClassPathResource("/update/version.json");
+
+            VersionInfo versionInfo2 = mapper2.readValue(resource2.getFile(), VersionInfo.class);
+            System.out.println(versionInfo2.getVersion());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            ObjectMapper mapper3 = new ObjectMapper();
+
+            Resource resource3 = new ClassPathResource("/version.json");
+
+            VersionInfo versionInfo3 = mapper3.readValue(resource3.getFile(), VersionInfo.class);
+            System.out.println(versionInfo3.getVersion());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         Path currentPath = Paths.get("").toAbsolutePath();
         System.out.println(currentPath.toString());
 
 
-        ObjectMapper mapper = new ObjectMapper();
-
-        Resource resource = new ClassPathResource("/app/update/version.json");
-
-        VersionInfo versionInfo = mapper.readValue(resource.getFile(), VersionInfo.class);
-
-        ObjectMapper mapper2 = new ObjectMapper();
-
-        Resource resource2 = new ClassPathResource("/update/version.json");
-
-        VersionInfo versionInfo2 = mapper2.readValue(resource2.getFile(), VersionInfo.class);
-
-        ObjectMapper mapper3 = new ObjectMapper();
-
-        Resource resource3 = new ClassPathResource("/version.json");
-
-        VersionInfo versionInfo3 = mapper3.readValue(resource3.getFile(), VersionInfo.class);
-
-//        return versionInfo.getVersion();
-        return currentPath.toString() + " " + versionInfo.getVersion() + " " + versionInfo2.getVersion() + " " + versionInfo3.getVersion();
+        return "update";
     }
 
     @GetMapping("/download")
