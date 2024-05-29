@@ -43,7 +43,7 @@ public class updaterController {
         try {
             ObjectMapper mapper = new ObjectMapper();
 
-            Resource resource = new ClassPathResource("//app/update/version.json");
+            Resource resource = new ClassPathResource(System.getProperty("user.dir")+"/update/version.json");
 
             VersionInfo versionInfo = mapper.readValue(resource.getFile(), VersionInfo.class);
 
