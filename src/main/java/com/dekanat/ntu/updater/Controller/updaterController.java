@@ -36,8 +36,20 @@ public class updaterController {
 
         VersionInfo versionInfo = mapper.readValue(resource.getFile(), VersionInfo.class);
 
+        ObjectMapper mapper2 = new ObjectMapper();
+
+        Resource resource2 = new ClassPathResource("/update/version.json");
+
+        VersionInfo versionInfo2 = mapper.readValue(resource.getFile(), VersionInfo.class);
+
+        ObjectMapper mapper3 = new ObjectMapper();
+
+        Resource resource3 = new ClassPathResource("/version.json");
+
+        VersionInfo versionInfo3 = mapper.readValue(resource.getFile(), VersionInfo.class);
+
 //        return versionInfo.getVersion();
-        return currentPath.toString();
+        return currentPath.toString() + " " + versionInfo.getVersion() + " " + versionInfo2.getVersion() + " " + versionInfo3.getVersion();
     }
 
     @GetMapping("/download")
