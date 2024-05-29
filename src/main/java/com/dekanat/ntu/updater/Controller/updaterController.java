@@ -30,7 +30,7 @@ public class updaterController {
         try {
             ObjectMapper mapper = new ObjectMapper();
 
-            Resource resource = new ClassPathResource("/app/update/version.json");
+            Resource resource = new ClassPathResource("//app/update/version.json");
 
             VersionInfo versionInfo = mapper.readValue(resource.getFile(), VersionInfo.class);
 
@@ -42,7 +42,7 @@ public class updaterController {
         try {
             ObjectMapper mapper2 = new ObjectMapper();
 
-            Resource resource2 = new ClassPathResource("/update/version.json");
+            Resource resource2 = new ClassPathResource("//update/version.json");
 
             VersionInfo versionInfo2 = mapper2.readValue(resource2.getFile(), VersionInfo.class);
             System.out.println(versionInfo2.getVersion());
@@ -53,7 +53,7 @@ public class updaterController {
         try {
             ObjectMapper mapper3 = new ObjectMapper();
 
-            Resource resource3 = new ClassPathResource("/version.json");
+            Resource resource3 = new ClassPathResource("//version.json");
 
             VersionInfo versionInfo3 = mapper3.readValue(resource3.getFile(), VersionInfo.class);
             System.out.println(versionInfo3.getVersion());
