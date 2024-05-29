@@ -30,6 +30,9 @@ public class updaterController {
         Resource resource = new ClassPathResource("/app/version.json");
         VersionInfo versionInfo = mapper.readValue(resource.getFile(), VersionInfo.class);
 
+        System.out.println(versionInfo.getVersion());
+
+
         return versionInfo.getVersion();
 
     }
