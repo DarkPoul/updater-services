@@ -40,13 +40,13 @@ public class updaterController {
 
         Resource resource2 = new ClassPathResource("/update/version.json");
 
-        VersionInfo versionInfo2 = mapper.readValue(resource.getFile(), VersionInfo.class);
+        VersionInfo versionInfo2 = mapper2.readValue(resource2.getFile(), VersionInfo.class);
 
         ObjectMapper mapper3 = new ObjectMapper();
 
         Resource resource3 = new ClassPathResource("/version.json");
 
-        VersionInfo versionInfo3 = mapper.readValue(resource.getFile(), VersionInfo.class);
+        VersionInfo versionInfo3 = mapper3.readValue(resource3.getFile(), VersionInfo.class);
 
 //        return versionInfo.getVersion();
         return currentPath.toString() + " " + versionInfo.getVersion() + " " + versionInfo2.getVersion() + " " + versionInfo3.getVersion();
