@@ -26,27 +26,17 @@ public class updaterController {
     @GetMapping("/check-update")
     public String checkUpdate() throws IOException {
 
-        try {
-            ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
+        Resource resource = new ClassPathResource("/app/version.json");
+        VersionInfo versionInfo = mapper.readValue(resource.getFile(), VersionInfo.class);
 
-            Resource resource = new ClassPathResource(System.getProperty("user.dir")+"/version.json");
+        return versionInfo.getVersion();
 
-            VersionInfo versionInfo = mapper.readValue(resource.getFile(), VersionInfo.class);
-
-            System.out.println(versionInfo.getVersion());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        return "update";
     }
 
     @GetMapping("/download")
     public ResponseEntity<Resource> download() throws IOException {
 
-        Path currentPath = Paths.get("").toAbsolutePath();
-        System.out.println(currentPath.toString());
 
         ClassPathResource file = new ClassPathResource("/app/update.zip");
         HttpHeaders headers = new HttpHeaders();
