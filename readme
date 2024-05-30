@@ -1,5 +1,5 @@
 git clone https://github.com/DarkPoul/updater-services.git
 cd updater-services
 docker build -t update-service .
-docker run -d -p 80:8080 -v /home/svarog/app:/app --name updater-container update-service
+docker run -d -p 80:8080 --name updater-container update-service
 docker exec -it updater-container /bin/bash
