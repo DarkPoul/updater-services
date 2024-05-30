@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -57,7 +58,7 @@ public class updaterController {
     }
 
     @PostMapping("/upload-update")
-    public String uploadUpdate(@RequestParam("jsonFile") MultipartFile jsonFile, @RequestParam("zipFile") MultipartFile zipFile)  {
+    public ResponseEntity<Void> uploadUpdate(@RequestParam("jsonFile") MultipartFile jsonFile, @RequestParam("zipFile") MultipartFile zipFile)  {
         try {
             // Обробка завантаженого JSON файлу
             Path jsonFilePath = Paths.get("/app/" + jsonFile.getOriginalFilename());
@@ -70,10 +71,13 @@ public class updaterController {
             }
         } catch(IOException ex) {
             ex.fillInStackTrace();
-            return "error";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
-        return "redirect:upload";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create("/version-info"));
+
+        return new ResponseEntity<>(headers, HttpStatus.FOUND);
     }
 
 }
