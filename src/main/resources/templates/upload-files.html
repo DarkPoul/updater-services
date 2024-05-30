@@ -1,13 +1,153 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ua">
+<html lang="ua" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Files</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .upload-form {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        .upload-form h2 {
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .file-drop-area {
+            position: relative;
+            border: 2px dashed #007bff;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        .file-drop-area.dragging {
+            background-color: #e9ecef;
+        }
+        .file-drop-area input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .file-drop-area p {
+            margin: 0;
+            font-size: 16px;
+            color: #6c757d;
+        }
+        .file-drop-area span {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #007bff;
+        }
+        .submit-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .submit-button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .submit-button:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-<form method="POST" enctype="multipart/form-data" action="/upload-update">
-    <input type="file" name="jsonFile" accept=".json">
-    <input type="file" name="zipFile" accept=".zip">
-    <button type="submit">Upload</button>
+<form class="upload-form" method="POST" enctype="multipart/form-data" action="/upload-update">
+    <h2>Завантаження оновлення</h2>
+    <div class="file-drop-area" id="jsonFileDropArea">
+        <p>Перетягніть файл JSON сюди або натисніть, щоб завантажити</p>
+        <input type="file" name="jsonFile" accept=".json" id="jsonFileInput">
+        <span id="jsonFileName"></span>
+    </div>
+    <div class="file-drop-area" id="zipFileDropArea">
+        <p>Перетягніть ZIP-файл сюди або натисніть, щоб завантажити</p>
+        <input type="file" name="zipFile" accept=".zip" id="zipFileInput">
+        <span id="zipFileName"></span>
+    </div>
+    <button type="submit" class="submit-button" id="uploadButton" disabled>Завантажити</button>
 </form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const jsonFileInput = document.getElementById('jsonFileInput');
+        const zipFileInput = document.getElementById('zipFileInput');
+        const uploadButton = document.getElementById('uploadButton');
+        const jsonFileDropArea = document.getElementById('jsonFileDropArea');
+        const zipFileDropArea = document.getElementById('zipFileDropArea');
+        const jsonFileName = document.getElementById('jsonFileName');
+        const zipFileName = document.getElementById('zipFileName');
+
+        function updateUploadButtonState() {
+            uploadButton.disabled = !(jsonFileInput.files.length > 0 && zipFileInput.files.length > 0);
+        }
+
+        function handleFileDrop(event, inputElement, fileNameElement) {
+            event.preventDefault();
+            event.stopPropagation();
+            inputElement.files = event.dataTransfer.files;
+            fileNameElement.textContent = event.dataTransfer.files[0].name;
+            updateUploadButtonState();
+        }
+
+        function handleFileChange(event, fileNameElement) {
+            fileNameElement.textContent = event.target.files[0].name;
+            updateUploadButtonState();
+        }
+
+        function addDragAndDropEvents(dropArea, inputElement, fileNameElement) {
+            dropArea.addEventListener('dragover', event => {
+                event.preventDefault();
+                dropArea.classList.add('dragging');
+            });
+
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.classList.remove('dragging');
+            });
+
+            dropArea.addEventListener('drop', event => {
+                dropArea.classList.remove('dragging');
+                handleFileDrop(event, inputElement, fileNameElement);
+            });
+
+            inputElement.addEventListener('change', event => {
+                handleFileChange(event, fileNameElement);
+            });
+
+            dropArea.addEventListener('click', () => {
+                inputElement.click();
+            });
+        }
+
+        addDragAndDropEvents(jsonFileDropArea, jsonFileInput, jsonFileName);
+        addDragAndDropEvents(zipFileDropArea, zipFileInput, zipFileName);
+    });
+</script>
 </body>
 </html>
