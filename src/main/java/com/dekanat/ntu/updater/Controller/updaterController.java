@@ -33,7 +33,7 @@ public class updaterController {
 
         System.out.println(versionInfo.getVersion());
 
-        return versionInfo.getVersion();
+        return "redirect:/version-info";
 
     }
 

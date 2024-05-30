@@ -13,7 +13,7 @@ import java.io.IOException;
 public class pageController {
     @GetMapping("/upload")
     public String getUploadPage() {
-        return "version-info";
+        return "upload-files";
     }
 
     @GetMapping("/version-info")
