@@ -2,10 +2,10 @@ package com.dekanat.ntu.updater.Controller;
 
 import com.dekanat.ntu.updater.Entity.VersionInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,18 +39,21 @@ public class updaterController {
 
     @GetMapping("/download")
     public ResponseEntity<Resource> download() throws IOException {
+        Path filePath = Paths.get("/app/update.zip");
+        if (Files.exists(filePath)) {
+            Resource file = new InputStreamResource(Files.newInputStream(filePath));
 
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=update.zip");
 
-        ClassPathResource file = new ClassPathResource("/app/update.zip");
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=update.zip");
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .contentType(MediaType
-                        .parseMediaType("application/x-zip-compressed"))
-                .body(new InputStreamResource(file
-                        .getInputStream()));
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.parseMediaType("application/x-zip-compressed"))
+                    .body(file);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(null);
+        }
     }
 
     @PostMapping("/upload-update")
