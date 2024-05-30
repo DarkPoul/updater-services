@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,11 +28,10 @@ public class updaterController {
     public String checkUpdate() throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
-        Resource resource = new ClassPathResource("/app/version.json");
-        VersionInfo versionInfo = mapper.readValue(resource.getFile(), VersionInfo.class);
+        File file = new File("/app/version.json");
+        VersionInfo versionInfo = mapper.readValue(file, VersionInfo.class);
 
         System.out.println(versionInfo.getVersion());
-
 
         return versionInfo.getVersion();
 
