@@ -38,7 +38,7 @@ public class updaterController {
 
     }
 
-    @GetMapping("/download")
+    @GetMapping("/download-update")
     public ResponseEntity<Resource> download() throws IOException {
         Path filePath = Paths.get("/app/update.zip");
         if (Files.exists(filePath)) {
@@ -82,7 +82,7 @@ public class updaterController {
         }
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/version-info"));
+        headers.setLocation(URI.create("/download"));
 
         return new ResponseEntity<>(headers, HttpStatus.FOUND);
     }
