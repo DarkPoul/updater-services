@@ -16,7 +16,7 @@ public class pageController {
         return "upload-files";
     }
 
-    @GetMapping("/version-info")
+    @GetMapping("/download")
     public String getVersionInfo(Model model) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         File file = new File("/app/version.json");

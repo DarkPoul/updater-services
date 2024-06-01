@@ -38,18 +38,37 @@ public class updaterController {
 
     }
 
-    @GetMapping("/download")
+    @GetMapping("/download-update")
     public ResponseEntity<Resource> download() throws IOException {
-        Path filePath = Paths.get("/app/update.zip");
+        Path filePath = Paths.get("/app/dekanat.exe");
         if (Files.exists(filePath)) {
             Resource file = new InputStreamResource(Files.newInputStream(filePath));
 
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=update.zip");
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=dekanat.exe");
 
             return ResponseEntity.ok()
                     .headers(headers)
-                    .contentType(MediaType.parseMediaType("application/x-zip-compressed"))
+                    .contentType(MediaType.parseMediaType("application/vnd.microsoft.portable-executable"))
+                    .body(file);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(null);
+        }
+    }
+
+    @GetMapping("/download-installer")
+    public ResponseEntity<Resource> downloadInstaller() throws IOException {
+        Path filePath = Paths.get("/app/DekanatInstaller.exe");
+        if (Files.exists(filePath)) {
+            Resource file = new InputStreamResource(Files.newInputStream(filePath));
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=DekanatInstaller.exe");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.parseMediaType("application/vnd.microsoft.portable-executable"))
                     .body(file);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -58,18 +77,30 @@ public class updaterController {
     }
 
     @PostMapping("/upload-update")
-    public ResponseEntity<Void> uploadUpdate(@RequestParam("jsonFile") MultipartFile jsonFile, @RequestParam("zipFile") MultipartFile zipFile)  {
+    public ResponseEntity<Void> uploadUpdate(
+            @RequestParam("jsonFile") MultipartFile jsonFile,
+            @RequestParam("installerFile") MultipartFile installerFile,
+            @RequestParam("updateFile") MultipartFile updateFile) {
         try {
             // Обробка завантаженого JSON файлу
             Path jsonFilePath = Paths.get("/app/" + jsonFile.getOriginalFilename());
             Files.createDirectories(jsonFilePath.getParent());
             Files.write(jsonFilePath, jsonFile.getBytes());
 
-            if (zipFile != null && !zipFile.isEmpty() && Objects.equals(zipFile.getContentType(), "application/x-zip-compressed")) {
-                Path zipFilePath = Paths.get("/app/", zipFile.getOriginalFilename());
-                Files.write(zipFilePath, zipFile.getBytes());
+            // Обробка завантаженого інсталятора
+            if (installerFile != null && !installerFile.isEmpty() &&
+                    Objects.equals(installerFile.getContentType(), "application/vnd.microsoft.portable-executable")) {
+                Path installerFilePath = Paths.get("/app/", installerFile.getOriginalFilename());
+                Files.write(installerFilePath, installerFile.getBytes());
             }
-        } catch(IOException ex) {
+
+            // Обробка завантаженого оновлення (EXE файл)
+            if (updateFile != null && !updateFile.isEmpty() &&
+                    Objects.equals(updateFile.getContentType(), "application/vnd.microsoft.portable-executable")) {
+                Path updateFilePath = Paths.get("/app/", updateFile.getOriginalFilename());
+                Files.write(updateFilePath, updateFile.getBytes());
+            }
+        } catch (IOException ex) {
             ex.fillInStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

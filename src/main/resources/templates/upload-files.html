@@ -86,10 +86,15 @@
         <input type="file" name="jsonFile" accept=".json" id="jsonFileInput">
         <span id="jsonFileName"></span>
     </div>
-    <div class="file-drop-area" id="zipFileDropArea">
-        <p>Перетягніть ZIP-файл сюди або натисніть, щоб завантажити</p>
-        <input type="file" name="zipFile" accept=".zip" id="zipFileInput">
-        <span id="zipFileName"></span>
+    <div class="file-drop-area" id="installerFileDropArea">
+        <p>Перетягніть файл інсталятора (.exe) сюди або натисніть, щоб завантажити</p>
+        <input type="file" name="installerFile" accept=".exe" id="installerFileInput">
+        <span id="installerFileName"></span>
+    </div>
+    <div class="file-drop-area" id="updateFileDropArea">
+        <p>Перетягніть файл оновлення (.exe) сюди або натисніть, щоб завантажити</p>
+        <input type="file" name="updateFile" accept=".exe" id="updateFileInput">
+        <span id="updateFileName"></span>
     </div>
     <button type="submit" class="submit-button" id="uploadButton" disabled>Завантажити</button>
 </form>
@@ -97,15 +102,27 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const jsonFileInput = document.getElementById('jsonFileInput');
-        const zipFileInput = document.getElementById('zipFileInput');
+        const installerFileInput = document.getElementById('installerFileInput');
+        const updateFileInput = document.getElementById('updateFileInput');
         const uploadButton = document.getElementById('uploadButton');
         const jsonFileDropArea = document.getElementById('jsonFileDropArea');
-        const zipFileDropArea = document.getElementById('zipFileDropArea');
+        const installerFileDropArea = document.getElementById('installerFileDropArea');
+        const updateFileDropArea = document.getElementById('updateFileDropArea');
         const jsonFileName = document.getElementById('jsonFileName');
-        const zipFileName = document.getElementById('zipFileName');
+        const installerFileName = document.getElementById('installerFileName');
+        const updateFileName = document.getElementById('updateFileName');
 
         function updateUploadButtonState() {
-            uploadButton.disabled = !(jsonFileInput.files.length > 0 && zipFileInput.files.length > 0);
+            uploadButton.disabled = !(jsonFileInput.files.length > 0 &&
+                installerFileInput.files.length > 0 &&
+                updateFileInput.files.length > 0 &&
+                validateFileNames());
+        }
+
+        function validateFileNames() {
+            return jsonFileInput.files[0].name === 'version.json' &&
+                installerFileInput.files[0].name === 'DekanatSetup.exe' &&
+                updateFileInput.files[0].name === 'dekanat.exe';
         }
 
         function handleFileDrop(event, inputElement, fileNameElement) {
@@ -146,7 +163,8 @@
         }
 
         addDragAndDropEvents(jsonFileDropArea, jsonFileInput, jsonFileName);
-        addDragAndDropEvents(zipFileDropArea, zipFileInput, zipFileName);
+        addDragAndDropEvents(installerFileDropArea, installerFileInput, installerFileName);
+        addDragAndDropEvents(updateFileDropArea, updateFileInput, updateFileName);
     });
 </script>
 </body>
