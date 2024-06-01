@@ -34,7 +34,7 @@ public class updaterController {
 
         System.out.println(versionInfo.getVersion());
 
-        return "redirect:/version-info";
+        return "redirect:/download";
 
     }
 
