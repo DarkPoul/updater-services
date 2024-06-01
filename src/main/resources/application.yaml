@@ -12,7 +12,3 @@ server:
     tomcat:
       max-swallow-size: 500MB
       connection-timeout: 60000
-
-logging:
-  level:
-    root: debug
