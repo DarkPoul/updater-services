@@ -87,9 +87,14 @@
         <span id="jsonFileName"></span>
     </div>
     <div class="file-drop-area" id="exeFileDropArea">
-        <p>Перетягніть .exe файл сюди або натисніть, щоб завантажити</p>
+        <p>Перетягніть .exe файл (з інсталятором) сюди або натисніть, щоб завантажити</p>
         <input type="file" name="exeFile" accept=".exe" id="exeFileInput">
         <span id="exeFileName"></span>
+    </div>
+    <div class="file-drop-area" id="exeFileInstallerDropArea">
+        <p>Перетягніть .exe файл (без інсталятора) сюди або натисніть, щоб завантажити</p>
+        <input type="file" name="exeFileInstaller" accept=".exe" id="exeFileInstallerInput">
+        <span id="exeFileInstallerName"></span>
     </div>
     <button type="submit" class="submit-button" id="uploadButton" disabled>Завантажити</button>
 </form>
@@ -98,14 +103,17 @@
     document.addEventListener('DOMContentLoaded', function () {
         const jsonFileInput = document.getElementById('jsonFileInput');
         const exeFileInput = document.getElementById('exeFileInput');
+        const exeFileInstallerInput = document.getElementById('exeFileInstallerInput');
         const uploadButton = document.getElementById('uploadButton');
         const jsonFileDropArea = document.getElementById('jsonFileDropArea');
         const exeFileDropArea = document.getElementById('exeFileDropArea');
+        const exeFileInstallerDropArea = document.getElementById('exeFileInstallerDropArea');
         const jsonFileName = document.getElementById('jsonFileName');
         const exeFileName = document.getElementById('exeFileName');
+        const exeFileInstallerName = document.getElementById('exeFileInstallerName');
 
         function updateUploadButtonState() {
-            uploadButton.disabled = !(jsonFileInput.files.length > 0 && exeFileInput.files.length > 0);
+            uploadButton.disabled = !(jsonFileInput.files.length > 0 && exeFileInput.files.length > 0 && exeFileInstallerInput.files.length > 0);
         }
 
         function handleFileDrop(event, inputElement, fileNameElement) {
@@ -147,6 +155,7 @@
 
         addDragAndDropEvents(jsonFileDropArea, jsonFileInput, jsonFileName);
         addDragAndDropEvents(exeFileDropArea, exeFileInput, exeFileName);
+        addDragAndDropEvents(exeFileInstallerDropArea, exeFileInstallerInput, exeFileInstallerName);
     });
 </script>
 </body>

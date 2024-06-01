@@ -60,7 +60,8 @@ public class updaterController {
     @PostMapping("/upload-update")
     public ResponseEntity<Void> uploadUpdate(
             @RequestParam("jsonFile") MultipartFile jsonFile,
-            @RequestParam("exeFile") MultipartFile exeFile) {
+            @RequestParam("exeFile") MultipartFile exeFile,
+            @RequestParam("exeFile") MultipartFile exeFileInstaller ){
 
         try {
             // Обробка завантаженого JSON файлу
@@ -69,13 +70,8 @@ public class updaterController {
             Files.write(jsonFilePath, jsonFile.getBytes());
 
             // Обробка завантаженого .exe файлу
-            if (exeFile != null && !exeFile.isEmpty() &&
-                    (Objects.equals(exeFile.getContentType(), "application/octet-stream") ||
-                            Objects.equals(exeFile.getContentType(), "application/x-msdownload"))) {
-                Path exeFilePath = Paths.get("/app/" + exeFile.getOriginalFilename());
-                Files.createDirectories(exeFilePath.getParent());
-                Files.write(exeFilePath, exeFile.getBytes());
-            }
+            uploadFile(exeFile);
+            uploadFile(exeFileInstaller);
         } catch(IOException ex) {
             ex.fillInStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -85,6 +81,16 @@ public class updaterController {
         headers.setLocation(URI.create("/download"));
 
         return new ResponseEntity<>(headers, HttpStatus.FOUND);
+    }
+
+    private void uploadFile(@RequestParam("exeFile") MultipartFile exeFileInstaller) throws IOException {
+        if (exeFileInstaller != null && !exeFileInstaller.isEmpty() &&
+                (Objects.equals(exeFileInstaller.getContentType(), "application/octet-stream") ||
+                        Objects.equals(exeFileInstaller.getContentType(), "application/x-msdownload"))) {
+            Path exeFilePath = Paths.get("/app/" + exeFileInstaller.getOriginalFilename());
+            Files.createDirectories(exeFilePath.getParent());
+            Files.write(exeFilePath, exeFileInstaller.getBytes());
+        }
     }
 
 }
