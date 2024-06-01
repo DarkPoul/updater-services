@@ -210,7 +210,37 @@
             progressBar.style.display = 'block';
         }
 
-        form.addEventListener('submit', uploadFiles);
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const formData = new FormData(form);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/upload-update');
+
+            // Опціонально: обробник прогресу
+            xhr.upload.addEventListener('progress', function (e) {
+                if (e.lengthComputable) {
+                    const percentComplete = (e.loaded / e.total) * 100;
+                    progressBarInner.style.width = percentComplete + '%';
+                }
+            });
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        alert('Файли успішно завантажені!');
+                    } else {
+                        alert('Сталася помилка під час завантаження.');
+                    }
+                    progressBar.style.display = 'none';
+                    progressBarInner.style.width = '0';
+                    uploadButton.disabled = true;
+                }
+            };
+
+            xhr.send(formData);
+            progressBar.style.display = 'block';
+        });
 
         addDragAndDropEvents(jsonFileDropArea, jsonFileInput, jsonFileName);
         addDragAndDropEvents(installerFileDropArea, installerFileInput, installerFileName);

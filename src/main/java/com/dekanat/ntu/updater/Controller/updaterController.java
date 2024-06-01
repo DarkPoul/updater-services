@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -79,15 +78,19 @@ public class updaterController {
     }
 
     @PostMapping("/upload-update")
-    public ResponseEntity<Void> uploadUpdate(
+    public ResponseEntity<String> uploadUpdate(
             @RequestParam("jsonFile") MultipartFile jsonFile,
             @RequestParam("installerFile") MultipartFile installerFile,
             @RequestParam("updateFile") MultipartFile updateFile) {
         try {
             // Обробка завантаженого JSON файлу
-            Path jsonFilePath = Paths.get("/app/" + jsonFile.getOriginalFilename());
-            Files.createDirectories(jsonFilePath.getParent());
-            Files.write(jsonFilePath, jsonFile.getBytes());
+            if (jsonFile != null && !jsonFile.isEmpty()) {
+                Path jsonFilePath = Paths.get("/app/" + jsonFile.getOriginalFilename());
+                Files.createDirectories(jsonFilePath.getParent());
+                Files.write(jsonFilePath, jsonFile.getBytes());
+            } else {
+                throw new IllegalArgumentException("JSON файл не був завантажений");
+            }
 
             // Обробка завантаженого інсталятора
             if (installerFile != null && !installerFile.isEmpty()) {
@@ -96,6 +99,8 @@ public class updaterController {
                 }
                 Path installerFilePath = Paths.get("/app/", installerFile.getOriginalFilename());
                 Files.write(installerFilePath, installerFile.getBytes());
+            } else {
+                throw new IllegalArgumentException("Інсталятор не був завантажений");
             }
 
             // Обробка завантаженого оновлення (EXE файл)
@@ -105,16 +110,15 @@ public class updaterController {
                 }
                 Path updateFilePath = Paths.get("/app/", updateFile.getOriginalFilename());
                 Files.write(updateFilePath, updateFile.getBytes());
+            } else {
+                throw new IllegalArgumentException("Оновлення не було завантажено");
             }
+
+            return ResponseEntity.ok("Файли успішно завантажені");
         } catch (IOException | IllegalArgumentException ex) {
             ex.fillInStackTrace(); // Логуємо стек-трейс для отримання інформації про помилку
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Сталася помилка під час завантаження файлів");
         }
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/download"));
-
-        return new ResponseEntity<>(headers, HttpStatus.FOUND);
     }
 
 }
