@@ -76,42 +76,20 @@
         .submit-button:hover:not(:disabled) {
             background-color: #0056b3;
         }
-        .progress-bar {
-            width: 100%;
-            background-color: #e9ecef;
-            border-radius: 6px;
-            overflow: hidden;
-            margin-top: 15px;
-            display: none;
-        }
-        .progress-bar-inner {
-            height: 20px;
-            background-color: #007bff;
-            width: 0;
-            transition: width 0.3s;
-        }
     </style>
 </head>
 <body>
-<form class="upload-form" id="uploadForm" method="POST" enctype="multipart/form-data">
+<form class="upload-form" method="POST" enctype="multipart/form-data" action="/upload-update">
     <h2>Завантаження оновлення</h2>
     <div class="file-drop-area" id="jsonFileDropArea">
         <p>Перетягніть файл JSON сюди або натисніть, щоб завантажити</p>
         <input type="file" name="jsonFile" accept=".json" id="jsonFileInput">
         <span id="jsonFileName"></span>
     </div>
-    <div class="file-drop-area" id="installerFileDropArea">
-        <p>Перетягніть файл інсталятора (.exe) сюди або натисніть, щоб завантажити</p>
-        <input type="file" name="installerFile" accept=".exe" id="installerFileInput">
-        <span id="installerFileName"></span>
-    </div>
-    <div class="file-drop-area" id="updateFileDropArea">
-        <p>Перетягніть файл оновлення (.exe) сюди або натисніть, щоб завантажити</p>
-        <input type="file" name="updateFile" accept=".exe" id="updateFileInput">
-        <span id="updateFileName"></span>
-    </div>
-    <div class="progress-bar" id="progressBar">
-        <div class="progress-bar-inner" id="progressBarInner"></div>
+    <div class="file-drop-area" id="exeFileDropArea">
+        <p>Перетягніть .exe файл сюди або натисніть, щоб завантажити</p>
+        <input type="file" name="exeFile" accept=".exe" id="exeFileInput">
+        <span id="exeFileName"></span>
     </div>
     <button type="submit" class="submit-button" id="uploadButton" disabled>Завантажити</button>
 </form>
@@ -119,30 +97,15 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const jsonFileInput = document.getElementById('jsonFileInput');
-        const installerFileInput = document.getElementById('installerFileInput');
-        const updateFileInput = document.getElementById('updateFileInput');
+        const exeFileInput = document.getElementById('exeFileInput');
         const uploadButton = document.getElementById('uploadButton');
         const jsonFileDropArea = document.getElementById('jsonFileDropArea');
-        const installerFileDropArea = document.getElementById('installerFileDropArea');
-        const updateFileDropArea = document.getElementById('updateFileDropArea');
+        const exeFileDropArea = document.getElementById('exeFileDropArea');
         const jsonFileName = document.getElementById('jsonFileName');
-        const installerFileName = document.getElementById('installerFileName');
-        const updateFileName = document.getElementById('updateFileName');
-        const progressBar = document.getElementById('progressBar');
-        const progressBarInner = document.getElementById('progressBarInner');
-        const form = document.getElementById('uploadForm');
+        const exeFileName = document.getElementById('exeFileName');
 
         function updateUploadButtonState() {
-            uploadButton.disabled = !(jsonFileInput.files.length > 0 &&
-                installerFileInput.files.length > 0 &&
-                updateFileInput.files.length > 0 &&
-                validateFileNames());
-        }
-
-        function validateFileNames() {
-            return jsonFileInput.files[0].name === 'version.json' &&
-                installerFileInput.files[0].name === 'DekanatSetup.exe' &&
-                updateFileInput.files[0].name === 'dekanat.exe';
+            uploadButton.disabled = !(jsonFileInput.files.length > 0 && exeFileInput.files.length > 0);
         }
 
         function handleFileDrop(event, inputElement, fileNameElement) {
@@ -182,69 +145,8 @@
             });
         }
 
-        function uploadFiles(event) {
-            event.preventDefault();
-            const formData = new FormData(form);
-            const xhr = new XMLHttpRequest();
-
-            xhr.upload.addEventListener('progress', function (e) {
-                if (e.lengthComputable) {
-                    const percentComplete = (e.loaded / e.total) * 100;
-                    progressBarInner.style.width = percentComplete + '%';
-                }
-            });
-
-            xhr.addEventListener('load', function () {
-                if (xhr.status === 200) {
-                    alert('Завантаження успішне!');
-                } else {
-                    alert('Сталася помилка при завантаженні.');
-                }
-                progressBar.style.display = 'none';
-                progressBarInner.style.width = '0';
-                uploadButton.disabled = true;
-            });
-
-            xhr.open('POST', '/upload-update');
-            xhr.send(formData);
-            progressBar.style.display = 'block';
-        }
-
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
-            const formData = new FormData(form);
-
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', '/upload-update');
-
-            // Опціонально: обробник прогресу
-            xhr.upload.addEventListener('progress', function (e) {
-                if (e.lengthComputable) {
-                    const percentComplete = (e.loaded / e.total) * 100;
-                    progressBarInner.style.width = percentComplete + '%';
-                }
-            });
-
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-                        alert('Файли успішно завантажені!');
-                    } else {
-                        alert('Сталася помилка під час завантаження.');
-                    }
-                    progressBar.style.display = 'none';
-                    progressBarInner.style.width = '0';
-                    uploadButton.disabled = true;
-                }
-            };
-
-            xhr.send(formData);
-            progressBar.style.display = 'block';
-        });
-
         addDragAndDropEvents(jsonFileDropArea, jsonFileInput, jsonFileName);
-        addDragAndDropEvents(installerFileDropArea, installerFileInput, installerFileName);
-        addDragAndDropEvents(updateFileDropArea, updateFileInput, updateFileName);
+        addDragAndDropEvents(exeFileDropArea, exeFileInput, exeFileName);
     });
 </script>
 </body>
