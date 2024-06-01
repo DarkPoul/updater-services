@@ -41,6 +41,16 @@ public class updaterController {
     @GetMapping("/download-update")
     public ResponseEntity<Resource> download() throws IOException {
         Path filePath = Paths.get("/app/Dekanat.exe");
+        return getResourceResponseEntity(filePath);
+    }
+
+    @GetMapping("/download-installer")
+    public ResponseEntity<Resource> downloadInstaller() throws IOException {
+        Path filePath = Paths.get("/app/DekanatSetup.exe");
+        return getResourceResponseEntity(filePath);
+    }
+
+    private ResponseEntity<Resource> getResourceResponseEntity(Path filePath) throws IOException {
         if (Files.exists(filePath)) {
             Resource file = new InputStreamResource(Files.newInputStream(filePath));
 
