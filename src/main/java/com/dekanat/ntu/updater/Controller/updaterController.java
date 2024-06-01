@@ -40,16 +40,16 @@ public class updaterController {
 
     @GetMapping("/download-update")
     public ResponseEntity<Resource> download() throws IOException {
-        Path filePath = Paths.get("/app/update.zip");
+        Path filePath = Paths.get("/app/Dekanat.exe");
         if (Files.exists(filePath)) {
             Resource file = new InputStreamResource(Files.newInputStream(filePath));
 
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=update.zip");
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Dekanat.exe");
 
             return ResponseEntity.ok()
                     .headers(headers)
-                    .contentType(MediaType.parseMediaType("application/x-zip-compressed"))
+                    .contentType(MediaType.parseMediaType("application/octet-stream"))
                     .body(file);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
