@@ -61,7 +61,7 @@ public class updaterController {
     public ResponseEntity<Void> uploadUpdate(
             @RequestParam("jsonFile") MultipartFile jsonFile,
             @RequestParam("exeFile") MultipartFile exeFile,
-            @RequestParam("exeFile") MultipartFile exeFileInstaller ){
+            @RequestParam("exeFileInstaller") MultipartFile exeFileInstaller ){
 
         try {
             // Обробка завантаженого JSON файлу
