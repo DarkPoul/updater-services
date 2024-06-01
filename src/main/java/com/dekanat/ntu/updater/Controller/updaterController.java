@@ -2,7 +2,7 @@ package com.dekanat.ntu.updater.Controller;
 
 import com.dekanat.ntu.updater.Entity.VersionInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -34,22 +34,23 @@ public class updaterController {
 
         System.out.println(versionInfo.getVersion());
 
-        return "redirect:/version-info";
+        return "redirect:/download";
 
     }
 
     @GetMapping("/download-update")
-    public ResponseEntity<Resource> download() throws IOException {
+    public ResponseEntity<Resource> downloadUpdate() throws IOException {
         Path filePath = Paths.get("/app/dekanat.exe");
         if (Files.exists(filePath)) {
-            Resource file = new InputStreamResource(Files.newInputStream(filePath));
+            byte[] fileContent = Files.readAllBytes(filePath);
+            Resource file = new ByteArrayResource(fileContent);
 
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=dekanat.exe");
 
             return ResponseEntity.ok()
                     .headers(headers)
-                    .contentType(MediaType.parseMediaType("application/vnd.microsoft.portable-executable"))
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(file);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -61,14 +62,15 @@ public class updaterController {
     public ResponseEntity<Resource> downloadInstaller() throws IOException {
         Path filePath = Paths.get("/app/DekanatInstaller.exe");
         if (Files.exists(filePath)) {
-            Resource file = new InputStreamResource(Files.newInputStream(filePath));
+            byte[] fileContent = Files.readAllBytes(filePath);
+            Resource file = new ByteArrayResource(fileContent);
 
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=DekanatInstaller.exe");
 
             return ResponseEntity.ok()
                     .headers(headers)
-                    .contentType(MediaType.parseMediaType("application/vnd.microsoft.portable-executable"))
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(file);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -106,7 +108,7 @@ public class updaterController {
         }
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/version-info"));
+        headers.setLocation(URI.create("/download"));
 
         return new ResponseEntity<>(headers, HttpStatus.FOUND);
     }
