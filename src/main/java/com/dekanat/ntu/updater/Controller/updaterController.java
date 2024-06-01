@@ -90,20 +90,24 @@ public class updaterController {
             Files.write(jsonFilePath, jsonFile.getBytes());
 
             // Обробка завантаженого інсталятора
-            if (installerFile != null && !installerFile.isEmpty() &&
-                    Objects.equals(installerFile.getContentType(), "application/vnd.microsoft.portable-executable")) {
+            if (installerFile != null && !installerFile.isEmpty()) {
+                if (!Objects.equals(installerFile.getContentType(), "application/vnd.microsoft.portable-executable")) {
+                    throw new IllegalArgumentException("Невірний тип файлу для інсталятора");
+                }
                 Path installerFilePath = Paths.get("/app/", installerFile.getOriginalFilename());
                 Files.write(installerFilePath, installerFile.getBytes());
             }
 
             // Обробка завантаженого оновлення (EXE файл)
-            if (updateFile != null && !updateFile.isEmpty() &&
-                    Objects.equals(updateFile.getContentType(), "application/vnd.microsoft.portable-executable")) {
+            if (updateFile != null && !updateFile.isEmpty()) {
+                if (!Objects.equals(updateFile.getContentType(), "application/vnd.microsoft.portable-executable")) {
+                    throw new IllegalArgumentException("Невірний тип файлу для оновлення");
+                }
                 Path updateFilePath = Paths.get("/app/", updateFile.getOriginalFilename());
                 Files.write(updateFilePath, updateFile.getBytes());
             }
-        } catch (IOException ex) {
-            ex.fillInStackTrace();
+        } catch (IOException | IllegalArgumentException ex) {
+            ex.fillInStackTrace(); // Логуємо стек-трейс для отримання інформації про помилку
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 

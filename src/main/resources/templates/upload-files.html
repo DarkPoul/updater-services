@@ -76,10 +76,24 @@
         .submit-button:hover:not(:disabled) {
             background-color: #0056b3;
         }
+        .progress-bar {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 15px;
+            display: none;
+        }
+        .progress-bar-inner {
+            height: 20px;
+            background-color: #007bff;
+            width: 0;
+            transition: width 0.3s;
+        }
     </style>
 </head>
 <body>
-<form class="upload-form" method="POST" enctype="multipart/form-data" action="/upload-update">
+<form class="upload-form" id="uploadForm" method="POST" enctype="multipart/form-data">
     <h2>Завантаження оновлення</h2>
     <div class="file-drop-area" id="jsonFileDropArea">
         <p>Перетягніть файл JSON сюди або натисніть, щоб завантажити</p>
@@ -96,6 +110,9 @@
         <input type="file" name="updateFile" accept=".exe" id="updateFileInput">
         <span id="updateFileName"></span>
     </div>
+    <div class="progress-bar" id="progressBar">
+        <div class="progress-bar-inner" id="progressBarInner"></div>
+    </div>
     <button type="submit" class="submit-button" id="uploadButton" disabled>Завантажити</button>
 </form>
 
@@ -111,6 +128,9 @@
         const jsonFileName = document.getElementById('jsonFileName');
         const installerFileName = document.getElementById('installerFileName');
         const updateFileName = document.getElementById('updateFileName');
+        const progressBar = document.getElementById('progressBar');
+        const progressBarInner = document.getElementById('progressBarInner');
+        const form = document.getElementById('uploadForm');
 
         function updateUploadButtonState() {
             uploadButton.disabled = !(jsonFileInput.files.length > 0 &&
@@ -161,6 +181,36 @@
                 inputElement.click();
             });
         }
+
+        function uploadFiles(event) {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const xhr = new XMLHttpRequest();
+
+            xhr.upload.addEventListener('progress', function (e) {
+                if (e.lengthComputable) {
+                    const percentComplete = (e.loaded / e.total) * 100;
+                    progressBarInner.style.width = percentComplete + '%';
+                }
+            });
+
+            xhr.addEventListener('load', function () {
+                if (xhr.status === 200) {
+                    alert('Завантаження успішне!');
+                } else {
+                    alert('Сталася помилка при завантаженні.');
+                }
+                progressBar.style.display = 'none';
+                progressBarInner.style.width = '0';
+                uploadButton.disabled = true;
+            });
+
+            xhr.open('POST', '/upload-update');
+            xhr.send(formData);
+            progressBar.style.display = 'block';
+        }
+
+        form.addEventListener('submit', uploadFiles);
 
         addDragAndDropEvents(jsonFileDropArea, jsonFileInput, jsonFileName);
         addDragAndDropEvents(installerFileDropArea, installerFileInput, installerFileName);
