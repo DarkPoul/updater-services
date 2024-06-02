@@ -46,7 +46,7 @@ public class updaterController {
 
     @GetMapping("/download-installer")
     public ResponseEntity<Resource> downloadInstaller() throws IOException {
-        Path filePath = Paths.get("/app/DekanatSetup.exe");
+        Path filePath = Paths.get("/app/DekanatSetup.exe.exe");
         return getResourceResponseEntity(filePath);
     }
 
